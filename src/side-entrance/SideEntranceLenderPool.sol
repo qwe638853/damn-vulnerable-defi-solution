@@ -31,7 +31,7 @@ contract SideEntranceLenderPool {
 
         SafeTransferLib.safeTransferETH(msg.sender, amount);
     }
-
+    //@audit-info: Reentrancy attack
     function flashLoan(uint256 amount) external {
         uint256 balanceBefore = address(this).balance;
 
@@ -41,4 +41,6 @@ contract SideEntranceLenderPool {
             revert RepayFailed();
         }
     }
+    
+
 }

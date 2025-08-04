@@ -17,6 +17,7 @@ contract TrusterLenderPool is ReentrancyGuard {
         token = _token;
     }
 
+    //@audit-info: can use target.functionCall(data) to call any function on the target contract
     function flashLoan(uint256 amount, address borrower, address target, bytes calldata data)
         external
         nonReentrant
@@ -25,7 +26,7 @@ contract TrusterLenderPool is ReentrancyGuard {
         uint256 balanceBefore = token.balanceOf(address(this));
 
         token.transfer(borrower, amount);
-        target.functionCall(data);
+        target.functionCall(data);      
 
         if (token.balanceOf(address(this)) < balanceBefore) {
             revert RepayFailed();
