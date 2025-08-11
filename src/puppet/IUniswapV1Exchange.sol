@@ -23,7 +23,7 @@ interface IUniswapV1Exchange {
         external
         returns (uint256 out);
     function ethToTokenTransferOutput(uint256 tokens_bought, uint256 deadline, address recipient)
-        external
+        external 
         returns (uint256 out);
     function factoryAddress() external returns (address out);
     function getEthToTokenInputPrice(uint256 eth_sold) external returns (uint256 out);

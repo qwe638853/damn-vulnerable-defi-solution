@@ -89,7 +89,7 @@ contract TheRewarderDistributor {
 
             uint256 wordPosition = inputClaim.batchNumber / 256;
             uint256 bitPosition = inputClaim.batchNumber % 256;
-
+            //can avoid this if statement
             if (token != inputTokens[inputClaim.tokenIndex]) {
                 if (address(token) != address(0)) {
                     if (!_setClaimed(token, amount, wordPosition, bitsSet)) revert AlreadyClaimed();

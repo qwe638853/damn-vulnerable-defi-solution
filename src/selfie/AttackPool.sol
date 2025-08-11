@@ -39,7 +39,6 @@ contract AttackPool is IERC3156FlashBorrower {
         IERC20(token).approve(address(pool),amount);
 
         return keccak256("ERC3156FlashBorrower.onFlashLoan");
-
     }
 
 }
